@@ -2,10 +2,10 @@ import '../../entities/current_weather/current_weather.dart';
 import '../../repository/weather_repository.dart';
 import 'get_current_weather.dart';
 
-class GetCurrentWeatherImpl extends GetCurrentWeather {
+class GetCurrentWeatherUseCaseImpl extends GetCurrentWeatherUseCase {
   final WeatherRepository weatherRepository;
 
-  GetCurrentWeatherImpl(this.weatherRepository);
+  GetCurrentWeatherUseCaseImpl(this.weatherRepository);
 
   @override
   Future<CurrentWeather> call(String cityName) async {

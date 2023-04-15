@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'configs/themes/dark_theme/dark_theme.dart';
+import 'configs/themes/light_theme/light_theme.dart';
+import 'presentation/bloc/current_weather_bloc.dart';
 import 'presentation/views/home_page_view.dart';
 
 void main() {
@@ -11,10 +15,14 @@ class WeatherApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: HomePage(),
+    return MaterialApp(
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: ThemeMode.dark,
+      home: BlocProvider(
+        create: (context) => CurrentWeatherBloc(),
+        child: const HomePage(),
+      ),
     );
   }
 }
-
-

@@ -1,8 +1,10 @@
+
 import 'package:flutter/material.dart';
 
 final ColorScheme greenColorScheme =
     ColorScheme.fromSeed(seedColor: Colors.green);
 
-final ThemeData lightTheme = ThemeData.light(useMaterial3: true).copyWith(
+final ThemeData darkTheme = ThemeData.dark(useMaterial3: true).copyWith(
   colorScheme: greenColorScheme,
+  appBarTheme: const AppBarTheme().copyWith(backgroundColor: Colors.green[100])
 );
