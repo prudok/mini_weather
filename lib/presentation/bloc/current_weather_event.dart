@@ -1,7 +1,5 @@
 part of 'current_weather_bloc.dart';
 
-//TODO: check if @immutable is needed
-@immutable
 abstract class CurrentWeatherEvent {
   const CurrentWeatherEvent();
 

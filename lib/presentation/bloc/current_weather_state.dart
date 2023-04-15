@@ -4,20 +4,20 @@ abstract class CurrentWeatherState {
   CurrentWeather? currentWeather;
 }
 
-class CurrentWeatherLoading extends CurrentWeatherState {
+class CurrentWeatherLoadingState extends CurrentWeatherState {
   @override
   CurrentWeather? get currentWeather => null;
 }
 
-class CurrentWeatherLoaded extends CurrentWeatherState {
+class CurrentWeatherLoadedState extends CurrentWeatherState {
   @override
   final CurrentWeather currentWeather;
 
-  CurrentWeatherLoaded(this.currentWeather);
+  CurrentWeatherLoadedState(this.currentWeather);
 }
 
-class CurrentWeatherError extends CurrentWeatherState {
-  CurrentWeatherError(this.message);
+class CurrentWeatherErrorState extends CurrentWeatherState {
+  CurrentWeatherErrorState(this.message);
   final String message;
 
   @override

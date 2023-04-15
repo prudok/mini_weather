@@ -20,13 +20,13 @@ class _HomePageState extends State<HomePage> {
       builder: (context, state) {
         CurrentWeatherBloc currentWeatherBloc =
             context.watch<CurrentWeatherBloc>();
-        CurrentWeather weather = currentWeatherBloc.state.currentWeather!;
+        CurrentWeather? weather = currentWeatherBloc.state.currentWeather;
         return Scaffold(
           appBar: AppBar(
             title: const Text('Weather App'),
             centerTitle: true,
           ),
-          body: CurrentWeatherState is CurrentWeatherLoading
+          body: CurrentWeatherState is CurrentWeatherLoadingState
               ? const Center(
                   child: CircularProgressIndicator(),
                 )
@@ -61,14 +61,14 @@ class _HomePageState extends State<HomePage> {
                         child: const Text('Get Weather'),
                       ),
                       const SizedBox(height: 15),
-                      weather.location!.name == null
+                      weather?.location?.name == null
                           ? const Center(
-                              child: Text('City Not Found'),
+                              child: Text('No City Found'),
                           )
                           : Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(weather.location!.region!),
+                                Text(weather!.location!.region!),
                                 Text('Temperature: ${weather.current!.tempC} °C'),
                                 Text('Wind Kph: ${weather.current!.windKph}'),
                               ],
