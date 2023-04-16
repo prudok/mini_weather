@@ -1,19 +1,33 @@
 part of 'current_weather_bloc.dart';
 
 abstract class CurrentWeatherState {
-  CurrentWeather? currentWeather;
+  WeatherForecastWeekly? weatherForecastWeekly;
+  Weather? weather;
 }
 
-class CurrentWeatherLoadingState extends CurrentWeatherState {
+class CurrentWeatherInitialState extends CurrentWeatherState {
   @override
-  CurrentWeather? get currentWeather => null;
+  Weather? get weather => null;
+}
+
+class WeatherLoadingState extends CurrentWeatherState {
+  @override
+  Weather? get weather => null;
 }
 
 class CurrentWeatherLoadedState extends CurrentWeatherState {
   @override
-  final CurrentWeather currentWeather;
+  final Weather weather;
 
-  CurrentWeatherLoadedState(this.currentWeather);
+  CurrentWeatherLoadedState(this.weather);
+}
+
+class CurrentWeatherForecastState extends CurrentWeatherState {
+  @override
+  final WeatherForecastWeekly weatherForecastWeekly;
+
+  CurrentWeatherForecastState(this.weatherForecastWeekly);
+
 }
 
 class CurrentWeatherErrorState extends CurrentWeatherState {
@@ -21,5 +35,5 @@ class CurrentWeatherErrorState extends CurrentWeatherState {
   final String message;
 
   @override
-  CurrentWeather? get currentWeather => throw UnimplementedError();
+  Weather? get weather => throw UnimplementedError();
 }

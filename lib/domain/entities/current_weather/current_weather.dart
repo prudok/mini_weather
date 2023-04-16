@@ -1,13 +1,13 @@
 import '../current/current.dart';
 import '../location/location.dart';
 
-class CurrentWeather {
+class Weather {
   Location? location;
   Current? current;
 
-  CurrentWeather({this.location, this.current});
+  Weather({this.location, this.current});
 
-  CurrentWeather.fromJson(Map<String, dynamic> json) {
+  Weather.fromJson(Map<String, dynamic> json) {
     location = json['location'] != null
         ? Location.fromJson(json['location'])
         : null;

@@ -9,7 +9,7 @@ class GetCurrentWeatherUseCaseImpl extends GetCurrentWeatherUseCase {
 
   //TODO: convert to future
   @override
-  Future<CurrentWeather> call(String cityName) async {
+  Future<Weather> call(String cityName) async {
     return await weatherRepository.getWeather(cityName);
   }
 }
