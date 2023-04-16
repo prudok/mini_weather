@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:weather_app/core/constants/api_constants.dart';
-import 'package:weather_app/domain/entities/weather_forecast/weather_forecast.dart';
 
 import '../../domain/entities/current_weather/current_weather.dart';
 import '../../domain/entities/weather_forecast/weather_forecast_weekly.dart';
@@ -34,6 +33,7 @@ class WeatherAPIImpl extends WeatherAPI {
     var queryParameters = {
       'key': APIConstants.apiKey,
       'q': cityName,
+      'days': '14',
     };
     var uri = Uri.https(
       APIConstants.baseUrl,

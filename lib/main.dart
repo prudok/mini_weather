@@ -15,13 +15,13 @@ class WeatherApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      themeMode: ThemeMode.dark,
-      home: BlocProvider(
-        create: (context) => CurrentWeatherBloc(),
-        child: const HomePage(),
+    return BlocProvider(
+      create: (context) => CurrentWeatherBloc(),
+      child: MaterialApp(
+        theme: lightTheme,
+        darkTheme: darkTheme,
+        themeMode: ThemeMode.light,
+        home: const HomePage(),
       ),
     );
   }
