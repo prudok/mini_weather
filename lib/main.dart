@@ -18,6 +18,7 @@ class WeatherApp extends StatelessWidget {
     return BlocProvider(
       create: (context) => CurrentWeatherBloc(),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: lightTheme,
         darkTheme: darkTheme,
         themeMode: ThemeMode.light,

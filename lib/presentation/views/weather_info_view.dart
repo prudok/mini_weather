@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:weather_app/domain/entities/weather_forecast/weather_forecast_weekly.dart';
 
 import '../bloc/current_weather_bloc.dart';
 
@@ -11,8 +10,11 @@ class WeatherInfoView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<CurrentWeatherBloc, CurrentWeatherState>(
       builder: (context, state) {
-        var currentWeatherBloc = context.watch<CurrentWeatherBloc>();
-        var weatherForecastWeekly = currentWeatherBloc.state.weatherForecastWeekly;
+        final currentWeatherBloc = context.watch<CurrentWeatherBloc>();
+        final weatherForecastWeekly =
+            currentWeatherBloc.state.weatherForecastWeekly;
+        final weatherForecastList =
+            weatherForecastWeekly?.forecast?.forecastday;
         return Scaffold(
           appBar: AppBar(
             title: const Text('Weather Info'),
@@ -24,11 +26,29 @@ class WeatherInfoView extends StatelessWidget {
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.7,
                 child: ListView.builder(
-                  itemCount: 14,
+                  itemCount: weatherForecastList?.length ?? 0,
                   itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(
-                          '${weatherForecastWeekly?.forecast!.forecastday?[index].date}'),
+                    return Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      child: ListTile(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          side: const BorderSide(color: Colors.grey),
+                        ),
+                        trailing:
+                            weatherForecastList?[index].day?.condition?.icon ==
+                                    null
+                                ? null
+                                : Image.network(
+                                    'http:${weatherForecastList?[index].day?.condition?.icon}',
+                                  ),
+                        title: Text(
+                          '${weatherForecastList?[index].date},  ${weatherForecastList?[index].day?.condition?.text} - ${weatherForecastList?[index].day?.mintempC} °C',
+                        ),
+                      ),
                     );
                   },
                 ),
