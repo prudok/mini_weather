@@ -9,12 +9,13 @@ part 'current_weather_state.dart';
 class CurrentWeatherBloc
     extends Bloc<CurrentWeatherEvent, CurrentWeatherState> {
   CurrentWeatherBloc() : super(CurrentWeatherInitialState()) {
-
     on<CurrentWeatherForecastEvent>((event, emit) async {
-      // emit(WeatherLoadingState());
-      await getWeatherForecastProvider.call(event.cityName).then((currentWeatherForecastWeekly) => emit(
-            CurrentWeatherForecastState(currentWeatherForecastWeekly),
-          ));
+      emit(CurrentWeatherForecastLoading());
+      await getWeatherForecastProvider
+          .call(event.cityName)
+          .then((currentWeatherForecastWeekly) => emit(
+                CurrentWeatherForecastState(currentWeatherForecastWeekly),
+              ));
     });
   }
 }

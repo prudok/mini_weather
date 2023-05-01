@@ -4,27 +4,22 @@ abstract class CurrentWeatherState {
   WeatherForecastWeekly? weatherForecastWeekly;
 }
 
-class CurrentWeatherInitialState extends CurrentWeatherState {
-}
-
-class WeatherLoadingState extends CurrentWeatherState {
-}
-
-class CurrentWeatherLoadedState extends CurrentWeatherState {
-}
+class CurrentWeatherInitialState extends CurrentWeatherState {}
 
 class CurrentWeatherForecastState extends CurrentWeatherState {
   @override
   final WeatherForecastWeekly weatherForecastWeekly;
 
   CurrentWeatherForecastState(this.weatherForecastWeekly);
-
 }
+
+class CurrentWeatherForecastLoading extends CurrentWeatherState {}
 
 class CurrentWeatherErrorState extends CurrentWeatherState {
   CurrentWeatherErrorState(this.message);
   final String message;
 
-  // @override
-  // Weather? get weather => throw UnimplementedError();
+  @override
+  WeatherForecastWeekly? get weatherForecastWeekly =>
+      throw UnimplementedError();
 }

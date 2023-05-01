@@ -13,3 +13,4 @@ class CurrentWeatherForecastEvent extends CurrentWeatherEvent {
   const CurrentWeatherForecastEvent(this.cityName);
   final String cityName;
 }
+
