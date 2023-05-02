@@ -15,45 +15,38 @@ class WeatherInfoView extends StatelessWidget {
             currentWeatherBloc.state.weatherForecastWeekly;
         final weatherForecastList =
             weatherForecastWeekly?.forecast?.forecastday;
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Weather Info'),
-            centerTitle: true,
-          ),
-          body: Column(
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.7,
-                child: ListView.builder(
-                  itemCount: weatherForecastList?.length ?? 0,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      child: ListTile(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          side: const BorderSide(color: Colors.grey),
-                        ),
-                        trailing:
-                            weatherForecastList?[index].day?.condition?.icon ==
-                                    null
-                                ? null
-                                : Image.network(
-                                    'http:${weatherForecastList?[index].day?.condition?.icon}',
-                                  ),
-                        title: Text(
-                          '${weatherForecastList?[index].date},  ${weatherForecastList?[index].day?.condition?.text} - ${weatherForecastList?[index].day?.mintempC} °C',
-                        ),
-                      ),
-                    );
-                  },
+        return SizedBox(
+          width: MediaQuery.of(context).size.width * 0.85,
+          height: MediaQuery.of(context).size.height * 0.3,
+          child: ListView.builder(
+            itemCount: weatherForecastList?.length ?? 0,
+            itemBuilder: (context, index) {
+              return Container(
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 2,
                 ),
-              )
-            ],
+                child: ListTile(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    side: const BorderSide(color: Colors.grey),
+                  ),
+                  trailing:
+                      weatherForecastList?[index].day?.condition?.icon == null
+                          ? null
+                          : Image.network(
+                              'http:${weatherForecastList?[index].day?.condition?.icon}',
+                            ),
+                  title: Text(
+                    '${weatherForecastList?[index].date},  ${weatherForecastList?[index].day?.condition?.text} - ${weatherForecastList?[index].day?.mintempC} °C',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         );
       },

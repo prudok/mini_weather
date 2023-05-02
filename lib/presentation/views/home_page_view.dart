@@ -16,6 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final TextEditingController _cityNameController = TextEditingController();
   final GlobalKey _formKey = GlobalKey<FormState>();
+  final DateTime currentTime = DateTime.now();
   Artboard? _riverArtboard;
   StateMachineController? _stateMachineController;
   SMIInput<bool>? _isCloudy;
@@ -57,112 +58,161 @@ class _HomePageState extends State<HomePage> {
             currentWeatherBloc.state.weatherForecastWeekly;
         final weatherForecastList =
             weatherForecastWeekly?.forecast?.forecastday;
-
-        if (weatherForecastList?[0].day?.condition?.code == 1000) {
-          _isCloudy?.value == true;
-          _isRainy?.value == true;
-        }
-
-        if (weatherForecastList?[0].day?.condition?.code == 1003 ||
-            weatherForecastList?[0].day?.condition?.code == 1006) {
-          _isCloudy!.value == true;
-          _isRainy!.value == false;
-        }
+        _timeInHours?.value = currentTime.hour.toDouble();
 
         if (weatherForecastList?[0].day?.condition?.code == 1063 ||
-            weatherForecastList?[0].day?.condition?.code == 1066) {
-          _isCloudy!.value == true;
-          _isRainy!.value == false;
+            weatherForecastList?[0].day?.condition?.code == 1003 ||
+            weatherForecastList?[0].day?.condition?.code == 1063) {
+          _isCloudy?.value = true;
+          _isRainy?.value = false;
+          _isOpen?.value = true;
         }
+
+        if (weatherForecastList?[0].day?.condition?.code == 1000) {
+          _isCloudy?.value = false;
+          _isOpen?.value = true;
+          _isRainy?.value = false;
+        }
+
+        if (weatherForecastList?[0].day?.condition?.code == 1189 ||
+            weatherForecastList?[0].day?.condition?.code == 1180 ||
+            weatherForecastList?[0].day?.condition?.code == 1189 ||
+            weatherForecastList?[0].day?.condition?.code == 1192 ||
+            weatherForecastList?[0].day?.condition?.code == 1195 ||
+            weatherForecastList?[0].day?.condition?.code == 1183) {
+          _isCloudy?.value = true;
+          _isRainy?.value = true;
+          _isOpen?.value = true;
+        }
+
         return Scaffold(
           body: _riverArtboard == null
               ? const SizedBox()
-              : Stack(
-                  children: [
-                    Rive(
-                      fit: BoxFit.cover,
-                      artboard: _riverArtboard!,
-                    ),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 50,
-                          vertical: 40,
-                        ),
-                        child: CityNameForm(
-                          formKey: _formKey,
-                          cityNameController: _cityNameController,
-                          currentWeatherBloc: currentWeatherBloc,
+              : SingleChildScrollView(
+                  // physics: const BouncingScrollPhysics(),
+                  child: Stack(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        child: Rive(
+                          fit: BoxFit.cover,
+                          artboard: _riverArtboard!,
                         ),
                       ),
-                    ),
-                    currentWeatherBloc.state is CurrentWeatherForecastLoading
-                        ? const Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        : weatherForecastList?.isEmpty == null &&
-                                currentWeatherBloc.state
-                                    is CurrentWeatherForecastLoading
-                            ? const Center(
-                                child: Text('No Data'),
-                              )
-                            : Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Container(
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 20,
-                                    vertical: 150,
-                                  ),
-                                  child: Card(
-                                    child: Text(
-                                        '${weatherForecastList?[0].date},  ${weatherForecastList?[0].day?.condition?.text} - ${weatherForecastList?[0].day?.mintempC} °C'),
+                      Positioned(
+                        bottom: 0,
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height * 0.5,
+                          child: Column(
+                            children: [
+                              currentWeatherBloc.state
+                                      is CurrentWeatherForecastLoading
+                                  ? const Center(
+                                      child: CircularProgressIndicator(),
+                                    )
+                                  : weatherForecastList == null &&
+                                          currentWeatherBloc.state
+                                              is CurrentWeatherForecastState
+                                      ? const Center(
+                                          child: Text('No Data Found'),
+                                        )
+                                      : Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 20,
+                                          ),
+                                          child: const WeatherInfoView(),
+                                        ),
+                              Container(
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 50,
+                                  vertical: 30,
+                                ),
+                                child: TextFormField(
+                                  key: _formKey,
+                                  controller: _cityNameController,
+                                  onFieldSubmitted: (term) {
+                                    currentWeatherBloc.add(
+                                      CurrentWeatherForecastEvent(
+                                        _cityNameController.text,
+                                      ),
+                                    );
+                                  },
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold),
+                                  decoration: const InputDecoration(
+                                    hintText: 'Enter City Name',
+                                    hintStyle: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold),
+                                    border: OutlineInputBorder(
+                                        borderSide: BorderSide.none),
                                   ),
                                 ),
                               ),
-                  ],
+                            ],
+                          ),
+                        ),
+                      ),
+                      // Align(
+                      //   alignment: Alignment.bottomCenter,
+                      //   child: Container(
+                      //     margin: const EdgeInsets.symmetric(
+                      //       horizontal: 50,
+                      //       vertical: 30,
+                      //     ),
+                      //     child: TextFormField(
+                      //       key: _formKey,
+                      //       controller: _cityNameController,
+                      //       onFieldSubmitted: (term) {
+                      //         currentWeatherBloc.add(
+                      //           CurrentWeatherForecastEvent(
+                      //             _cityNameController.text,
+                      //           ),
+                      //         );
+                      //       },
+                      //       style: const TextStyle(
+                      //           color: Colors.white,
+                      //           fontSize: 25,
+                      //           fontWeight: FontWeight.bold),
+                      //       decoration: const InputDecoration(
+                      //         hintText: 'Enter City Name',
+                      //         hintStyle: TextStyle(
+                      //             color: Colors.white,
+                      //             fontSize: 25,
+                      //             fontWeight: FontWeight.bold),
+                      //         border:
+                      //             OutlineInputBorder(borderSide: BorderSide.none),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      // currentWeatherBloc.state is CurrentWeatherForecastLoading
+                      //     ? const Center(
+                      //         child: CircularProgressIndicator(),
+                      //       )
+                      //     : weatherForecastList == null &&
+                      //             currentWeatherBloc.state
+                      //                 is CurrentWeatherForecastState
+                      //         ? const Center(
+                      //             child: Text('No Data Found'),
+                      //           )
+                      //         : Align(
+                      //             alignment: Alignment.bottomCenter,
+                      //             child: Container(
+                      //               margin: const EdgeInsets.only(bottom: 60),
+                      //               child: const WeatherInfoView(),
+                      //             ),
+                      //           ),
+                    ],
+                  ),
                 ),
         );
       },
-    );
-  }
-}
-
-class CityNameForm extends StatelessWidget {
-  const CityNameForm({
-    super.key,
-    required GlobalKey<State<StatefulWidget>> formKey,
-    required TextEditingController cityNameController,
-    required this.currentWeatherBloc,
-  })  : _formKey = formKey,
-        _cityNameController = cityNameController;
-
-  final GlobalKey<State<StatefulWidget>> _formKey;
-  final TextEditingController _cityNameController;
-  final CurrentWeatherBloc currentWeatherBloc;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      key: _formKey,
-      controller: _cityNameController,
-      onFieldSubmitted: (term) {
-        currentWeatherBloc.add(
-          CurrentWeatherForecastEvent(_cityNameController.text),
-        );
-      },
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 20,
-      ),
-      decoration: const InputDecoration(
-        hintText: 'Enter City Name',
-        hintStyle: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
-        border: OutlineInputBorder(borderSide: BorderSide.none),
-      ),
     );
   }
 }
