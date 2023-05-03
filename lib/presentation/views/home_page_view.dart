@@ -89,7 +89,6 @@ class _HomePageState extends State<HomePage> {
           body: _riverArtboard == null
               ? const SizedBox()
               : SingleChildScrollView(
-                  // physics: const BouncingScrollPhysics(),
                   child: Stack(
                     children: [
                       SizedBox(
@@ -146,11 +145,13 @@ class _HomePageState extends State<HomePage> {
                                   decoration: const InputDecoration(
                                     hintText: 'Enter City Name',
                                     hintStyle: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.bold),
+                                      color: Colors.white,
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                     border: OutlineInputBorder(
-                                        borderSide: BorderSide.none),
+                                      borderSide: BorderSide.none,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -158,56 +159,6 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
-                      // Align(
-                      //   alignment: Alignment.bottomCenter,
-                      //   child: Container(
-                      //     margin: const EdgeInsets.symmetric(
-                      //       horizontal: 50,
-                      //       vertical: 30,
-                      //     ),
-                      //     child: TextFormField(
-                      //       key: _formKey,
-                      //       controller: _cityNameController,
-                      //       onFieldSubmitted: (term) {
-                      //         currentWeatherBloc.add(
-                      //           CurrentWeatherForecastEvent(
-                      //             _cityNameController.text,
-                      //           ),
-                      //         );
-                      //       },
-                      //       style: const TextStyle(
-                      //           color: Colors.white,
-                      //           fontSize: 25,
-                      //           fontWeight: FontWeight.bold),
-                      //       decoration: const InputDecoration(
-                      //         hintText: 'Enter City Name',
-                      //         hintStyle: TextStyle(
-                      //             color: Colors.white,
-                      //             fontSize: 25,
-                      //             fontWeight: FontWeight.bold),
-                      //         border:
-                      //             OutlineInputBorder(borderSide: BorderSide.none),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-                      // currentWeatherBloc.state is CurrentWeatherForecastLoading
-                      //     ? const Center(
-                      //         child: CircularProgressIndicator(),
-                      //       )
-                      //     : weatherForecastList == null &&
-                      //             currentWeatherBloc.state
-                      //                 is CurrentWeatherForecastState
-                      //         ? const Center(
-                      //             child: Text('No Data Found'),
-                      //           )
-                      //         : Align(
-                      //             alignment: Alignment.bottomCenter,
-                      //             child: Container(
-                      //               margin: const EdgeInsets.only(bottom: 60),
-                      //               child: const WeatherInfoView(),
-                      //             ),
-                      //           ),
                     ],
                   ),
                 ),
