@@ -11,7 +11,7 @@ MiniWeather allows you to view information about weather in your location(or loc
 - Enter new city where you would like to see weather in first free days
 
 ## Used packages
-- State management with [flutter_bloc](https://pub.dev/packages/flutter_bloc)
+- State management with [bloc](https://pub.dev/packages/bloc)
 - [Freezed](https://pub.dev/packages/freezed), code generator for data-classes/unions/pattern-matching/cloning and [freezed_annotation](https://pub.dev/packages/freezed_annotation)
 - Weather Data with [WeatherAPI](https://www.weatherapi.com/)
 - HTTP requests with [http](https://pub.dev/packages/http)
