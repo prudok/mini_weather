@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rive/rive.dart';
+import 'package:weather_app/domain/entities/weather_forecast/forecast_day/forecast_day.dart';
 
 import '../bloc/current_weather_bloc.dart';
 import 'weather_info_view.dart';
@@ -17,12 +18,48 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _cityNameController = TextEditingController();
   final GlobalKey _formKey = GlobalKey<FormState>();
   final DateTime currentTime = DateTime.now();
+
   Artboard? _riverArtboard;
-  StateMachineController? _stateMachineController;
+
   SMIInput<bool>? _isCloudy;
   SMIInput<double>? _timeInHours;
   SMIInput<bool>? _isRainy;
   SMIInput<bool>? _isOpen;
+
+  bool isCloudy(int? weatherCode) {
+    if (weatherCode == null) {
+      return false;
+    }
+    if (weatherCode == 1063 || weatherCode == 1003 || weatherCode == 1063) {
+      return true;
+    }
+    return false;
+  }
+
+  bool isSunny(int? weatherCode) {
+    if (weatherCode == null) {
+      return false;
+    }
+    if (weatherCode == 1000) {
+      return true;
+    }
+    return false;
+  }
+
+  bool isRainy(int? weatherCode) {
+    if (weatherCode == null) {
+      return false;
+    }
+    if (weatherCode == 1189 ||
+        weatherCode == 1180 ||
+        weatherCode == 1189 ||
+        weatherCode == 1192 ||
+        weatherCode == 1195 ||
+        weatherCode == 1183) {
+      return true;
+    }
+    return false;
+  }
 
   @override
   void initState() {
@@ -59,27 +96,22 @@ class _HomePageState extends State<HomePage> {
         final weatherForecastList =
             weatherForecastWeekly?.forecast?.forecastday;
         _timeInHours?.value = currentTime.hour.toDouble();
+        final phoneHeight = MediaQuery.of(context).size.height;
+        final phoneWidth = MediaQuery.of(context).size.width;
 
-        if (weatherForecastList?[0].day?.condition?.code == 1063 ||
-            weatherForecastList?[0].day?.condition?.code == 1003 ||
-            weatherForecastList?[0].day?.condition?.code == 1063) {
+        if (isCloudy(weatherForecastList?[0].day?.condition?.code)) {
           _isCloudy?.value = true;
           _isRainy?.value = false;
           _isOpen?.value = true;
         }
 
-        if (weatherForecastList?[0].day?.condition?.code == 1000) {
+        if (isSunny(weatherForecastList?[0].day?.condition?.code)) {
           _isCloudy?.value = false;
           _isOpen?.value = true;
           _isRainy?.value = false;
         }
 
-        if (weatherForecastList?[0].day?.condition?.code == 1189 ||
-            weatherForecastList?[0].day?.condition?.code == 1180 ||
-            weatherForecastList?[0].day?.condition?.code == 1189 ||
-            weatherForecastList?[0].day?.condition?.code == 1192 ||
-            weatherForecastList?[0].day?.condition?.code == 1195 ||
-            weatherForecastList?[0].day?.condition?.code == 1183) {
+        if (isRainy(weatherForecastList?[0].day?.condition?.code)) {
           _isCloudy?.value = true;
           _isRainy?.value = true;
           _isOpen?.value = true;
@@ -92,8 +124,8 @@ class _HomePageState extends State<HomePage> {
                   child: Stack(
                     children: [
                       SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
+                        width: phoneWidth,
+                        height: phoneHeight,
                         child: Rive(
                           fit: BoxFit.cover,
                           artboard: _riverArtboard!,
@@ -101,69 +133,93 @@ class _HomePageState extends State<HomePage> {
                       ),
                       Positioned(
                         bottom: 0,
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.5,
-                          child: Column(
-                            children: [
-                              currentWeatherBloc.state
-                                      is CurrentWeatherForecastLoading
-                                  ? const Center(
-                                      child: CircularProgressIndicator(),
-                                    )
-                                  : weatherForecastList == null &&
-                                          currentWeatherBloc.state
-                                              is CurrentWeatherForecastState
-                                      ? const Center(
-                                          child: Text('No Data Found'),
-                                        )
-                                      : Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 20,
-                                          ),
-                                          child: const WeatherInfoView(),
-                                        ),
-                              Container(
-                                margin: const EdgeInsets.symmetric(
-                                  horizontal: 50,
-                                  vertical: 30,
-                                ),
-                                child: TextFormField(
-                                  key: _formKey,
-                                  controller: _cityNameController,
-                                  onFieldSubmitted: (term) {
-                                    currentWeatherBloc.add(
-                                      CurrentWeatherForecastEvent(
-                                        _cityNameController.text,
-                                      ),
-                                    );
-                                  },
-                                  style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold),
-                                  decoration: const InputDecoration(
-                                    hintText: 'Enter City Name',
-                                    hintStyle: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide.none,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        child: WeatherDataInfo(phoneWidth: phoneWidth, phoneHeight: phoneHeight, currentWeatherBloc: currentWeatherBloc, weatherForecastList: weatherForecastList, formKey: _formKey, cityNameController: _cityNameController),
                       ),
                     ],
                   ),
                 ),
         );
       },
+    );
+  }
+}
+
+class WeatherDataInfo extends StatelessWidget {
+  const WeatherDataInfo({
+    super.key,
+    required this.phoneWidth,
+    required this.phoneHeight,
+    required this.currentWeatherBloc,
+    required this.weatherForecastList,
+    required GlobalKey<State<StatefulWidget>> formKey,
+    required TextEditingController cityNameController,
+  }) : _formKey = formKey, _cityNameController = cityNameController;
+
+  final double phoneWidth;
+  final double phoneHeight;
+  final CurrentWeatherBloc currentWeatherBloc;
+  final List<Forecastday>? weatherForecastList;
+  final GlobalKey<State<StatefulWidget>> _formKey;
+  final TextEditingController _cityNameController;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: phoneWidth,
+      height: phoneHeight * 0.5,
+      child: Column(
+        children: [
+          currentWeatherBloc.state
+                  is CurrentWeatherForecastLoading
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : weatherForecastList == null &&
+                      currentWeatherBloc.state
+                          is CurrentWeatherForecastState
+                  ? const Center(
+                      child: Text('No Data Found'),
+                    )
+                  : Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                      ),
+                      child: const WeatherInfoView(),
+                    ),
+          Container(
+            margin: const EdgeInsets.symmetric(
+              horizontal: 50,
+              vertical: 30,
+            ),
+            child: TextFormField(
+              key: _formKey,
+              controller: _cityNameController,
+              onFieldSubmitted: (term) {
+                currentWeatherBloc.add(
+                  CurrentWeatherForecastEvent(
+                    _cityNameController.text,
+                  ),
+                );
+              },
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold),
+              decoration: const InputDecoration(
+                hintText: 'Enter City Name',
+                hintStyle: TextStyle(
+                  color: Colors.white,
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
