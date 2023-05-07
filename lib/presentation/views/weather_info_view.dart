@@ -13,13 +13,13 @@ class WeatherInfoView extends StatelessWidget {
         final currentWeatherBloc = context.watch<CurrentWeatherBloc>();
         final weatherForecastWeekly =
             currentWeatherBloc.state.weatherForecastWeekly;
-        final weatherForecastList =
+        final weatherForecast =
             weatherForecastWeekly?.forecast?.forecastday;
         return SizedBox(
           width: MediaQuery.of(context).size.width * 0.85,
           height: MediaQuery.of(context).size.height * 0.3,
           child: ListView.builder(
-            itemCount: weatherForecastList?.length ?? 0,
+            itemCount: weatherForecast?.length ?? 0,
             itemBuilder: (context, index) {
               return Container(
                 margin: const EdgeInsets.symmetric(
@@ -32,13 +32,13 @@ class WeatherInfoView extends StatelessWidget {
                     side: const BorderSide(color: Colors.grey),
                   ),
                   trailing:
-                      weatherForecastList?[index].day?.condition?.icon == null
+                      weatherForecast?[index].day?.condition?.icon == null
                           ? null
                           : Image.network(
-                              'http:${weatherForecastList?[index].day?.condition?.icon}',
+                              'http:${weatherForecast?[index].day?.condition?.icon}',
                             ),
                   title: Text(
-                    '${weatherForecastList?[index].date},  ${weatherForecastList?[index].day?.condition?.text} - ${weatherForecastList?[index].day?.mintempC} °C',
+                    '${weatherForecast?[index].date},  ${weatherForecast?[index].day?.condition?.text} - ${weatherForecast?[index].day?.mintempC} °C',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
