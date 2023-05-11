@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/current_weather_bloc.dart';
 
-class WeatherInfoView extends StatelessWidget {
-  const WeatherInfoView({super.key});
+class WeatherInfoExpanded extends StatelessWidget {
+  const WeatherInfoExpanded({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,8 +13,8 @@ class WeatherInfoView extends StatelessWidget {
         final currentWeatherBloc = context.watch<CurrentWeatherBloc>();
         final weatherForecastWeekly =
             currentWeatherBloc.state.weatherForecastWeekly;
-        final weatherForecast =
-            weatherForecastWeekly?.forecast?.forecastday;
+        final weatherForecast = weatherForecastWeekly?.forecast?.forecastday;
+
         return SizedBox(
           width: MediaQuery.of(context).size.width * 0.85,
           height: MediaQuery.of(context).size.height * 0.3,
@@ -31,12 +31,11 @@ class WeatherInfoView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                     side: const BorderSide(color: Colors.grey),
                   ),
-                  trailing:
-                      weatherForecast?[index].day?.condition?.icon == null
-                          ? null
-                          : Image.network(
-                              'http:${weatherForecast?[index].day?.condition?.icon}',
-                            ),
+                  trailing: weatherForecast?[index].day?.condition?.icon == null
+                      ? null
+                      : Image.network(
+                          'http:${weatherForecast?[index].day?.condition?.icon}',
+                        ),
                   title: Text(
                     '${weatherForecast?[index].date},  ${weatherForecast?[index].day?.condition?.text} - ${weatherForecast?[index].day?.mintempC} °C',
                     style: const TextStyle(

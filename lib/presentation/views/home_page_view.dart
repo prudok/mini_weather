@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rive/rive.dart';
+import 'package:weather_app/core/constants/assets_paths.dart';
+import 'package:weather_app/core/constants/frame_sizes.dart';
 
 import '../../config/status_codes/status_codes.dart';
-import '../../core/constants/text_styles.dart';
-import '../../domain/entities/weather_forecast/forecast_day/forecast_day.dart';
 import '../bloc/current_weather_bloc.dart';
-import 'weather_info_view.dart';
+import '../widgets/weather_data_info.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -28,11 +28,29 @@ class _HomePageState extends State<HomePage> {
   SMIInput<bool>? _isRainy;
   SMIInput<bool>? _isOpen;
 
+  void _setCloudAnimation() {
+    _isCloudy?.value = true;
+    _isRainy?.value = false;
+    _isOpen?.value = true;
+  }
+
+  void _setSunnyAnimation() {
+    _isCloudy?.value = false;
+    _isOpen?.value = true;
+    _isRainy?.value = false;
+  }
+
+  void _setRainyAnimation() {
+    _isCloudy?.value = true;
+    _isRainy?.value = true;
+    _isOpen?.value = true;
+  }
+
   @override
   void initState() {
     super.initState();
 
-    rootBundle.load('assets/animation/weather_app.riv').then(
+    rootBundle.load(AssetsPaths.weatherBackgroundAnimation).then(
       (data) async {
         final file = RiveFile.import(data);
         final artboard = file.mainArtboard;
@@ -56,6 +74,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return BlocBuilder<CurrentWeatherBloc, CurrentWeatherState>(
       builder: (context, state) {
+        FrameSize.init(context: context);
         CurrentWeatherBloc currentWeatherBloc =
             context.watch<CurrentWeatherBloc>();
         final weatherForecastWeekly =
@@ -67,25 +86,16 @@ class _HomePageState extends State<HomePage> {
 
         _timeInHours?.value = currentTime.hour.toDouble();
 
-        final phoneHeight = MediaQuery.of(context).size.height;
-        final phoneWidth = MediaQuery.of(context).size.width;
-
         if (StatusCodes.isCloudy(currentDayStatusCode)) {
-          _isCloudy?.value = true;
-          _isRainy?.value = false;
-          _isOpen?.value = true;
+          _setCloudAnimation();
         }
 
         if (StatusCodes.isSunny(currentDayStatusCode)) {
-          _isCloudy?.value = false;
-          _isOpen?.value = true;
-          _isRainy?.value = false;
+          _setSunnyAnimation();
         }
 
         if (StatusCodes.isRainy(currentDayStatusCode)) {
-          _isCloudy?.value = true;
-          _isRainy?.value = true;
-          _isOpen?.value = true;
+          _setRainyAnimation();
         }
 
         return Scaffold(
@@ -95,8 +105,8 @@ class _HomePageState extends State<HomePage> {
                   child: Stack(
                     children: [
                       SizedBox(
-                        width: phoneWidth,
-                        height: phoneHeight,
+                        width: FrameSize.screenWidth,
+                        height: FrameSize.screenHeight,
                         child: Rive(
                           fit: BoxFit.cover,
                           artboard: _riverArtboard!,
@@ -105,8 +115,8 @@ class _HomePageState extends State<HomePage> {
                       Positioned(
                         bottom: 0,
                         child: WeatherDataInfo(
-                          phoneWidth: phoneWidth,
-                          phoneHeight: phoneHeight,
+                          phoneWidth: FrameSize.screenWidth,
+                          phoneHeight: FrameSize.screenHeight,
                           currentWeatherBloc: currentWeatherBloc,
                           weatherForecastList: weatherForecastList,
                           formKey: _formKey,
@@ -118,82 +128,6 @@ class _HomePageState extends State<HomePage> {
                 ),
         );
       },
-    );
-  }
-}
-
-class WeatherDataInfo extends StatelessWidget {
-  const WeatherDataInfo({
-    super.key,
-    required this.phoneWidth,
-    required this.phoneHeight,
-    required this.currentWeatherBloc,
-    required this.weatherForecastList,
-    required GlobalKey<State<StatefulWidget>> formKey,
-    required TextEditingController cityNameController,
-  })  : _formKey = formKey,
-        _cityNameController = cityNameController;
-
-  final double phoneWidth;
-  final double phoneHeight;
-  final CurrentWeatherBloc currentWeatherBloc;
-  final List<Forecastday>? weatherForecastList;
-  final GlobalKey<State<StatefulWidget>> _formKey;
-  final TextEditingController _cityNameController;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: phoneWidth,
-      height: phoneHeight * 0.5,
-      child: Column(
-        children: [
-          currentWeatherBloc.state is CurrentWeatherForecastLoading
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : weatherForecastList == null &&
-                      currentWeatherBloc.state is CurrentWeatherForecastState
-                  ? Container(
-                      margin: const EdgeInsets.symmetric(vertical: 100),
-                      child: const Text(
-                        'No Data Found',
-                        style: AppTextStyles.titleSmall,
-                      ),
-                    )
-                  : Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                      ),
-                      child: const WeatherInfoView(),
-                    ),
-          Container(
-            margin: const EdgeInsets.symmetric(
-              horizontal: 50,
-              vertical: 30,
-            ),
-            child: TextFormField(
-              key: _formKey,
-              controller: _cityNameController,
-              onFieldSubmitted: (term) {
-                currentWeatherBloc.add(
-                  CurrentWeatherForecastEvent(
-                    _cityNameController.text,
-                  ),
-                );
-              },
-              style: AppTextStyles.titleLarge,
-              decoration: const InputDecoration(
-                hintText: 'Enter City Name',
-                hintStyle: AppTextStyles.titleLarge,
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
