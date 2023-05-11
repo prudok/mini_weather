@@ -6,10 +6,6 @@ class WeatherRepositoryImpl extends WeatherRepository {
   final WeatherAPI weatherAPI;
 
   WeatherRepositoryImpl(this.weatherAPI);
-  // @override
-  // Future<Weather> getWeather(String cityName) async {
-  //   return await weatherAPI.loadCurrentWeatherByName(cityName);
-  // }
 
   @override
   Future<WeatherForecastWeekly> getWeatherForecast(String cityName) async {

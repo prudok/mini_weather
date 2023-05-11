@@ -1,4 +1,3 @@
-import 'package:weather_app/domain/entities/weather_forecast/weather_forecast.dart';
 import 'package:weather_app/domain/repository/weather_repository.dart';
 import 'package:weather_app/domain/usecases/get_weather_forecast/get_weather_forecast.dart';
 
